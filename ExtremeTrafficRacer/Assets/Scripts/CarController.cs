@@ -55,7 +55,7 @@ public class CarController : MonoBehaviour
     void CheckIfArrived()
     {
         Debug.Log(Vector3.Distance(transform.position, current_point));
-        if(Vector3.Distance(transform.position , current_point) < 0.5f)
+        if(/*Vector3.Distance(transform.position , current_point)*/Mathf.Abs(transform.position.x - current_point.x) < 0.5f)
         {
             if(node_counter == mPathmanager.path_nodes.Count - 1)
             {

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CarController : MonoBehaviour
 {
-    public WheelCollider FrontWheelRight , FrontWheelLeft;
+    public WheelCollider FrontWheelRight , FrontWheelLeft , RearWheelLeft , RearWheelRight;
     public float maxSteerAngle = 45f;
 
     PathManager mPathmanager;
@@ -39,27 +39,56 @@ public class CarController : MonoBehaviour
     void Drive()
     {
         current_speed = 2 * Mathf.PI * FrontWheelRight.radius *FrontWheelRight.rpm * 60f / 1000f;
-        Debug.Log("Currentspeed====" + current_speed);
+        //Debug.Log("Currentspeed====" + current_speed);
         if (!Stop && current_speed < MaxSpeed)
         {
-            FrontWheelLeft.motorTorque = 1000;
-            FrontWheelRight.steerAngle = 1000;
+            FrontWheelLeft.motorTorque = 150;
+            FrontWheelRight.motorTorque = 150;
         }
-        else
+        else if(Stop)
         {
             FrontWheelLeft.motorTorque = 0f;
-            FrontWheelRight.steerAngle = 0f;
+            FrontWheelRight.motorTorque = 0f;
+
+            FrontWheelLeft.brakeTorque = 1000f;
+            FrontWheelRight.brakeTorque = 1000f;
+            RearWheelLeft.brakeTorque = 1000f;
+            RearWheelRight.brakeTorque = 1000f;
         }
     }
 
     void CheckIfArrived()
     {
-        Debug.Log(Vector3.Distance(transform.position, current_point));
-        if(/*Vector3.Distance(transform.position , current_point)*/Mathf.Abs(transform.position.x - current_point.x) < 0.5f)
+        //if (transform.position.y < current_point.y && Mathf.Abs(transform.position.y - current_point.y) < 0.8f)
+        //{
+        //    Debug.Log("Less than Y");
+        //    FrontWheelLeft.motorTorque = 500;
+        //    FrontWheelRight.steerAngle = 500;
+
+        //}
+        //else if (transform.position.y >= current_point.y)
+        //{
+        //    Debug.Log("More than Y");
+        //    FrontWheelLeft.motorTorque = 1000;
+        //    FrontWheelRight.steerAngle = 1000;
+        //}
+
+
+        Debug.Log("Distance====" + Vector3.Distance(transform.position, current_point) + " Node:" + node_counter + " Y Distance:" + Mathf.Abs(transform.position.y - current_point.y));
+        var dist = Vector3.Distance(transform.position, current_point);
+        float arriveDist = 0.85f;
+        if (dist > 1f && dist < 1.5f)
+        {
+            arriveDist = 1.5f;
+        }
+
+
+        if(dist /*Mathf.Abs(transform.position.x - current_point.x)*/ < arriveDist)
         {
             if(node_counter == mPathmanager.path_nodes.Count - 1)
             {
                 Stop = true;
+                Destroy(gameObject);
             }
             else
             {
